@@ -26,14 +26,22 @@ def get_video_duration(video_capture):
 def generate_thumbnail(img, timestamp, thumbnail_size=256, text_color=(255, 255, 255),
                        text_position=(0, 0)):
     """Resizes the image to thumbnail size and draws the timestamp on top of the image."""
+    # Even if the image is not square, the size of the longest dimension will be reduced to
+    # the given thumbnail size, and the other will be changed so as to maintain the ratio
     size = (thumbnail_size, thumbnail_size)
     img.thumbnail(size)
+    # Draw timestamp
     draw = ImageDraw.Draw(img)
     draw.text(text_position, timestamp, fill=text_color)
     return img
 
 
 def extract_thumbnails_from_video(path, image_count=30):
+    """Opens the video in the path and returns a list of thumbnails from some of its frames.
+
+    The frames are equally separated, using the total video time and the image
+    count to compute the time between each frame.
+    """
     vc = cv2.VideoCapture(path)
     frame = 0  # Initial frame
     count = 0
@@ -70,6 +78,7 @@ def create_thumbnail_grid(thumbnails, row_size=5):
     thumbnail_width, thumbnail_height = thumbnails[0].size
     column_count = len(thumbnails) // row_size
     img = Image.new('RGB', (thumbnail_width * row_size, thumbnail_height * column_count))
+    # TODO: Add video metadata on top of the image
     # Fill the grid with the thumbnails
     for i in range(len(thumbnails)):
         # Compute the top-left corner position where the next thumbnail has to go
