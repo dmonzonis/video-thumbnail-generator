@@ -1,6 +1,7 @@
 import argparse
 import cv2
 import datetime
+from math import ceil
 from PIL import Image, ImageDraw
 
 
@@ -36,7 +37,7 @@ def generate_thumbnail(img, timestamp, thumbnail_size=256, text_color=(255, 255,
     return img
 
 
-def extract_thumbnails_from_video(path, image_count=30):
+def extract_thumbnails_from_video(path, image_count):
     """Opens the video in the path and returns a list of thumbnails from some of its frames.
 
     The frames are equally separated, using the total video time and the image
@@ -72,11 +73,11 @@ def extract_thumbnails_from_video(path, image_count=30):
     return images
 
 
-def create_thumbnail_grid(thumbnails, row_size=5):
+def create_thumbnail_grid(thumbnails, row_size=4):
     """Create an image consisting of all the thumbnails in order, in a grid."""
     # Get the size of one of the thumbnails as reference
     thumbnail_width, thumbnail_height = thumbnails[0].size
-    column_count = len(thumbnails) // row_size
+    column_count = ceil(len(thumbnails) / row_size)
     img = Image.new('RGB', (thumbnail_width * row_size, thumbnail_height * column_count))
     # TODO: Add video metadata on top of the image
     # Fill the grid with the thumbnails
@@ -92,10 +93,12 @@ def create_thumbnail_grid(thumbnails, row_size=5):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('path', type=str, help="video file to parse")
+    parser.add_argument('-c', '--count', type=int, default=32,
+                        help="thumbnail count")
 
     args = parser.parse_args()
 
-    thumbnails = extract_thumbnails_from_video(args.path)
+    thumbnails = extract_thumbnails_from_video(args.path, image_count=args.count)
     composite = create_thumbnail_grid(thumbnails)
     composite.show()
 
