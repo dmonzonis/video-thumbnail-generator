@@ -2,6 +2,7 @@ import argparse
 import cv2
 import datetime
 from math import ceil
+import os
 from PIL import Image, ImageDraw
 
 
@@ -22,6 +23,11 @@ def get_video_duration(video_capture):
     frame_count = video_capture.get(cv2.CAP_PROP_FRAME_COUNT)
     fps = video_capture.get(cv2.CAP_PROP_FPS)
     return 1000 * (frame_count // fps)
+
+
+def get_filename(path):
+    base = os.path.basename(path)
+    return os.path.splitext(base)[0]
 
 
 def generate_thumbnail(img, timestamp, thumbnail_size=256, text_color=(255, 255, 255),
@@ -100,7 +106,8 @@ def main():
 
     thumbnails = extract_thumbnails_from_video(args.path, image_count=args.count)
     composite = create_thumbnail_grid(thumbnails)
-    composite.show()
+    filename = get_filename(args.path) + ".jpg"
+    composite.save(filename)
 
 
 if __name__ == "__main__":
