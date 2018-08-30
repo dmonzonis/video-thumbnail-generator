@@ -33,7 +33,7 @@ def generate_thumbnail(img, timestamp, thumbnail_size=256, text_color=(255, 255,
     return img
 
 
-def extract_thumbnails_from_video(path, image_count=10):
+def extract_thumbnails_from_video(path, image_count=30):
     vc = cv2.VideoCapture(path)
     frame = 0  # Initial frame
     count = 0
