@@ -16,6 +16,13 @@ def time_to_text(time):
     return str(datetime.timedelta(0, seconds))
 
 
+def get_video_duration(video_capture):
+    """Get the total video duration in milliseconds."""
+    frame_count = video_capture.get(cv2.CAP_PROP_FRAME_COUNT)
+    fps = video_capture.get(cv2.CAP_PROP_FPS)
+    return 1000 * (frame_count // fps)
+
+
 def generate_thumbnail(img, timestamp, thumbnail_size=256, text_color=(255, 255, 255),
                        text_position=(0, 0)):
     """Resizes the image to thumbnail size and draws the timestamp on top of the image."""
