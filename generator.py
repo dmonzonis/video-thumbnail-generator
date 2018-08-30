@@ -57,16 +57,31 @@ def extract_thumbnails_from_video(path, image_count=10):
     return images
 
 
+def create_thumbnail_grid(thumbnails, row_size=5):
+    """Create an image consisting of all the thumbnails in order, in a grid."""
+    # Get the size of one of the thumbnails as reference
+    thumbnail_width, thumbnail_height = thumbnails[0].size
+    column_count = len(thumbnails) // row_size
+    img = Image.new('RGB', (thumbnail_width * row_size, thumbnail_height * column_count))
+    # Fill the grid with the thumbnails
+    for i in range(len(thumbnails)):
+        # Compute the top-left corner position where the next thumbnail has to go
+        row = i % row_size
+        column = i // row_size
+        position = (thumbnail_width * row, thumbnail_height * column)
+        img.paste(thumbnails[i], position)
+    return img
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('path', type=str, help="video file to parse")
 
     args = parser.parse_args()
 
-    images = extract_thumbnails_from_video(args.path)
-    img = images[4]
-    img.show()
-    print(img.size)
+    thumbnails = extract_thumbnails_from_video(args.path)
+    composite = create_thumbnail_grid(thumbnails)
+    composite.show()
 
 
 if __name__ == "__main__":
