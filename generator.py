@@ -1,7 +1,7 @@
 import argparse
 import cv2
 import datetime
-from PIL import Image
+from PIL import Image, ImageDraw
 
 
 def cv2_to_img(array):
@@ -16,7 +16,17 @@ def time_to_text(time):
     return str(datetime.timedelta(0, seconds))
 
 
-def extract_frame_images(path, image_count=10):
+def generate_thumbnail(img, timestamp, thumbnail_size=256, text_color=(255, 255, 255),
+                       text_position=(0, 0)):
+    """Resizes the image to thumbnail size and draws the timestamp on top of the image."""
+    size = (thumbnail_size, thumbnail_size)
+    img.thumbnail(size)
+    draw = ImageDraw.Draw(img)
+    draw.text(text_position, timestamp, fill=text_color)
+    return img
+
+
+def extract_thumbnails_from_video(path, image_count=10):
     vc = cv2.VideoCapture(path)
     frame = 0  # Initial frame
     count = 0
@@ -33,7 +43,13 @@ def extract_frame_images(path, image_count=10):
         success, image = vc.read()
         if not success:
             break
-        images.append((cv2_to_img(image), timestamp))
+
+        # Convert to image and add timestamp
+        img = cv2_to_img(image)
+        generate_thumbnail(img, timestamp)
+        images.append(img)
+
+        # Update variables
         frame += step
         count += 1
 
@@ -47,8 +63,10 @@ def main():
 
     args = parser.parse_args()
 
-    images = extract_frame_images(args.path)
-    print(images)
+    images = extract_thumbnails_from_video(args.path)
+    img = images[4]
+    img.show()
+    print(img.size)
 
 
 if __name__ == "__main__":
