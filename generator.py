@@ -79,8 +79,9 @@ def extract_thumbnails_from_video(path, image_count):
         count += 1
 
     vc.release()
-    # TODO: If there are no images, it means there was an error with the file, so we
-    # should quit the program
+    if not images:
+        print("Error: File couldn't be processed")
+        exit(1)
     return images
 
 
