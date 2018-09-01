@@ -6,5 +6,5 @@ echo "Found $count files to process"
 
 for f in $FILES
 do
-    [ -e "$f" ] && echo "Processing file $f..." && python generator.py "$f"
+    [ -e "$f" ] && echo "Processing file $f..." && python generator.py "$f" -q
 done

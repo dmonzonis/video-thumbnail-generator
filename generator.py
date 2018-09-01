@@ -43,7 +43,7 @@ def generate_thumbnail(img, timestamp, thumbnail_size=256, text_color=(255, 255,
     return img
 
 
-def extract_thumbnails_from_video(path, image_count):
+def extract_thumbnails_from_video(path, image_count, quiet=False):
     """Opens the video in the path and returns a list of thumbnails from some of its frames.
 
     The frames are equally separated, using the total video time and the image
@@ -67,7 +67,8 @@ def extract_thumbnails_from_video(path, image_count):
             break
 
         # Give some output
-        print(f"Generating thumbnail {count} of {image_count} at frame {frame}")
+        if not quiet:
+            print(f"Generating thumbnail {count} of {image_count} at frame {frame}")
 
         # Convert to image and add timestamp
         img = cv2_to_img(image)
@@ -85,9 +86,10 @@ def extract_thumbnails_from_video(path, image_count):
     return images
 
 
-def create_thumbnail_grid(thumbnails, row_size):
+def create_thumbnail_grid(thumbnails, row_size, quiet=False):
     """Create an image consisting of all the thumbnails in order, in a grid."""
-    print("Compositing the final image")
+    if not quiet:
+        print("Compositing the final image")
     # Get the size of one of the thumbnails as reference
     thumbnail_width, thumbnail_height = thumbnails[0].size
     column_count = ceil(len(thumbnails) / row_size)
@@ -110,11 +112,14 @@ def main():
                         help="thumbnail count")
     parser.add_argument('-r', '--row-size', type=int, default=4,
                         help="number of columns per row")
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help="run in quiet mode")
 
     args = parser.parse_args()
 
-    thumbnails = extract_thumbnails_from_video(args.path, image_count=args.count)
-    composite = create_thumbnail_grid(thumbnails, args.row_size)
+    thumbnails = extract_thumbnails_from_video(args.path, image_count=args.count,
+                                               quiet=args.quiet)
+    composite = create_thumbnail_grid(thumbnails, args.row_size, args.quiet)
     filename = get_filename(args.path) + ".jpg"
     composite.save(filename)
 
