@@ -84,7 +84,7 @@ def extract_thumbnails_from_video(path, image_count):
     return images
 
 
-def create_thumbnail_grid(thumbnails, row_size=4):
+def create_thumbnail_grid(thumbnails, row_size):
     """Create an image consisting of all the thumbnails in order, in a grid."""
     print("Compositing the final image")
     # Get the size of one of the thumbnails as reference
@@ -107,12 +107,13 @@ def main():
     parser.add_argument('path', type=str, help="video file to parse")
     parser.add_argument('-c', '--count', type=int, default=32,
                         help="thumbnail count")
-    # TODO: Add row_count arg
+    parser.add_argument('-r', '--row-size', type=int, default=4,
+                        help="number of columns per row")
 
     args = parser.parse_args()
 
     thumbnails = extract_thumbnails_from_video(args.path, image_count=args.count)
-    composite = create_thumbnail_grid(thumbnails)
+    composite = create_thumbnail_grid(thumbnails, args.row_size)
     filename = get_filename(args.path) + ".jpg"
     composite.save(filename)
 
