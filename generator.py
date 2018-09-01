@@ -51,20 +51,23 @@ def extract_thumbnails_from_video(path, image_count):
     """
     vc = cv2.VideoCapture(path)
     frame = 0  # Initial frame
-    count = 0
+    count = 1
     images = []
 
     # Get total number of frames
     total = int(vc.get(cv2.CAP_PROP_FRAME_COUNT))
     step = total // image_count
 
-    while vc.isOpened() and count < image_count:
+    while vc.isOpened() and count <= image_count:
         vc.set(cv2.CAP_PROP_POS_FRAMES, frame)
         # Get the timestamp in ms
         timestamp = time_to_text(vc.get(cv2.CAP_PROP_POS_MSEC))
         success, image = vc.read()
         if not success:
             break
+
+        # Give some output
+        print(f"Generating thumbnail {count} of {image_count} at frame {frame}")
 
         # Convert to image and add timestamp
         img = cv2_to_img(image)
@@ -76,11 +79,14 @@ def extract_thumbnails_from_video(path, image_count):
         count += 1
 
     vc.release()
+    # TODO: If there are no images, it means there was an error with the file, so we
+    # should quit the program
     return images
 
 
 def create_thumbnail_grid(thumbnails, row_size=4):
     """Create an image consisting of all the thumbnails in order, in a grid."""
+    print("Compositing the final image")
     # Get the size of one of the thumbnails as reference
     thumbnail_width, thumbnail_height = thumbnails[0].size
     column_count = ceil(len(thumbnails) / row_size)
@@ -101,6 +107,7 @@ def main():
     parser.add_argument('path', type=str, help="video file to parse")
     parser.add_argument('-c', '--count', type=int, default=32,
                         help="thumbnail count")
+    # TODO: Add row_count arg
 
     args = parser.parse_args()
 
