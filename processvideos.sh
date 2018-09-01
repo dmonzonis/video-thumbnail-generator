@@ -1,4 +1,4 @@
-#!/bin/bashç
+#!/bin/bash
 # Process all videos in the current directory
 FILES="*.mp4 *.wmv *.flv *.mkv *.webm"
 count=$(ls -1q ${FILES} 2>/dev/null | wc -l)
