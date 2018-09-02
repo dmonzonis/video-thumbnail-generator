@@ -114,13 +114,21 @@ def main():
                         help="number of columns per row")
     parser.add_argument('-q', '--quiet', action='store_true',
                         help="run in quiet mode")
+    parser.add_argument('-o', '--output-name', type=str, default='',
+                        help="specify output image filename")
 
     args = parser.parse_args()
 
     thumbnails = extract_thumbnails_from_video(args.path, image_count=args.count,
                                                quiet=args.quiet)
     composite = create_thumbnail_grid(thumbnails, args.row_size, args.quiet)
-    filename = get_filename(args.path) + ".jpg"
+
+    if not args.output_name:
+        # Name the file exactly like the original, but with jpg format
+        filename = get_filename(args.path) + ".jpg"
+    else:
+        filename = args.output_name + ".jpg"
+
     composite.save(filename)
 
 
