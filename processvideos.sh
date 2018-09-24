@@ -1,6 +1,6 @@
 #!/bin/bash
 # Process all videos in the current directory
-FILES="*.mp4 *.wmv *.flv *.mkv *.webm"
+FILES="*.mp4 *.wmv *.flv *.mkv *.webm *.mov"
 count=$(ls -1q ${FILES} 2>/dev/null | wc -l)
 echo "Found $count files to process"
 
